@@ -38,15 +38,14 @@ const UserSchema = new mongoose.Schema(
       },
     },
 
-    phone_number: [
+    phone_number: 
       {
         unique: true,
         type: String,
         required: true,
         validate: /^(\+98|0)?9\d{9}$/,
       },
-    ],
-
+    
     gender: {
       type: String,
       required: false,

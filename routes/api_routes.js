@@ -8,7 +8,7 @@ const {
   updateUser,
   loginUser,
   logOutUser,
-  checkSessionForDashboard,
+  checkSession,
 } = require("../controllers/user");
 
 const { updateUserValidation } = require("../validations/users_validation");
@@ -23,6 +23,6 @@ router.patch("/users/:id",updateUserValidation, updateUser);
 router.post("/auth/login", loginUser);
 router.get("/logout", logOutUser);
 
-router.get("/dashboard", checkSessionForDashboard);
+router.get("/check_session", checkSession);
 
 module.exports = router;

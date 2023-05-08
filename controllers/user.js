@@ -105,7 +105,7 @@ const logOutUser = (req, res, next) => {
 };
 
 //dashboard api
-const checkSessionForDashboard= (req,res,next)=>{
+const checkSession= (req,res,next)=>{
   try {
     if (!req.session.user) {
       return next(new AppError("You are not logged in", 500));
@@ -124,5 +124,5 @@ module.exports = {
   updateUser,
   loginUser,
   logOutUser,
-  checkSessionForDashboard,
+  checkSession,
 };

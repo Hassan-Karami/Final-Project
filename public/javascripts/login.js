@@ -45,7 +45,7 @@ $(document).ready(function () {
     const response = await responseObject.json();
     showMessage("successfull login", "success");
     setTimeout(() => {
-      window.location.href = `http://localhost:9000/dashboard?username=${response.username}`;
+      window.location.href = `http://localhost:9000/dashboard`;
     }, 1000);
     console.log(response); 
   });
