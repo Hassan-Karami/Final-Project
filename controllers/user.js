@@ -104,13 +104,13 @@ const logOutUser = (req, res, next) => {
   req.session.destroy();
 };
 
-//dashboard api
+//check session
 const checkSession= (req,res,next)=>{
   try {
     if (!req.session.user) {
       return next(new AppError("You are not logged in", 500));
     }
-    res.status(200).send(req.session.user);
+    res.status(200).send({_id:req.session.user._id});
   } catch (error) {
     next(new AppError("internal error(check session fd)"));
   }

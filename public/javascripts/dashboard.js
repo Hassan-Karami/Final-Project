@@ -1,4 +1,5 @@
 $(document).ready(async function(){
+
   function showMessage(message, type) {
     const $messageBox = $("#message-box");
     const $message = $messageBox.find(".message");
@@ -29,7 +30,7 @@ $(document).ready(async function(){
   const $phoneNumberInput = $("#phone_number");
   const $registrationDateField = $("#registration_date");
 
-  const logoutButton = $("#logout-btn");
+
   //check session
   const responseObject = await fetch("http://localhost:9000/api/check_session");
   if (responseObject.status >= 400 && responseObject.status < 600) {
@@ -41,15 +42,42 @@ $(document).ready(async function(){
     return;
   }
   const response = await responseObject.json();
-  console.log(response);
-  $firstNameField.val(response.firstName);
-  $lastNameField.val(response.lastName);
-  $usernameField.val(response.username);
-  $roleField.val(response.role);
-  $genderFields.val(response.gender);
-  $registrationDateField.val(response.registration_date);
-  $phoneNumberInput.val(response.phone_number)
+  const userId = response._id;
+  const userInfoObject = await fetch(`/api/users/${userId}`);
+  const userInfo = await userInfoObject.json();
+  console.log(userInfo);
 
+  $firstNameField.val(userInfo.firstName);
+  $lastNameField.val(userInfo.lastName);
+  $usernameField.val(userInfo.username);
+  $roleField.val(userInfo.role);
+  $genderFields.val(userInfo.gender);
+  $registrationDateField.val(userInfo.registration_date);
+  $phoneNumberInput.val(userInfo.phone_number)
+
+  //update userInfo button 
+  const userInfo_form = $("#userInfo-form").on("submit",async (event)=>{
+    event.preventDefault();
+     const updateRequestBody = {};
+     if ($firstNameField.val()?.trim())
+       updateRequestBody.firstName = $firstNameField.val();
+     if ($lastNameField.val()?.trim())
+       updateRequestBody.lastName = $lastNameField.val();
+     if ($usernameField.val()?.trim())
+       updateRequestBody.username = $usernameField.val();
+     if ($phoneNumberInput.val()?.trim())
+       updateRequestBody.phone_number = $phoneNumberInput.val();
+     if ($roleField.val()?.trim()) updateRequestBody.role = $roleField.val();
+     if ($genderFields.val()?.trim())
+       updateRequestBody.gender = $genderFields.val();
+
+       
+
+  })
+ 
+
+//logout button handling
+  const logoutButton = $("#logout-btn");
   logoutButton.on("click", async (e) => {
     try {
       await fetch("http://localhost:9000/api/logout");
