@@ -7,7 +7,7 @@ const {AppError} = require("../utils/AppError");
 const getAllUsers = async(req, res, next) => {
   try {
     const usersList = await User.find();
-    res.send(usersList);
+    res.status(200).send(usersList);
   } catch (error) {
     console.log(error);
     next(new AppError("internal Error",500))
@@ -18,7 +18,7 @@ const getAllUsers = async(req, res, next) => {
 const getSingleUser = async (req, res, next) => {
   try {
     const targetUser = await User.findById(req.params.id,{password: 0});
-    res.send(targetUser);
+    res.status(200).send(targetUser);
   } catch (error) {
     console.log(error);
     next(new AppError("internal Error", 500));
@@ -38,7 +38,7 @@ const createUser = async(req,res,next)=>{
   };
   try {
     const newUser = await User.create(userCreationBody);
-    res.send(newUser);
+    res.status(201).send(newUser);
     
   } catch (error) {
     console.log(error);
@@ -90,9 +90,10 @@ const loginUser = async (req,res,next)=>{
     if(!isMatch) {
       return next(new AppError("user not found",404))
     }
-    req.session.user = targetUser;
-    console.log("user sat on session");
-    res.status(200).send(targetUser);
+    req.session.user = {_id: targetUser._id};
+    console.log("userId sat on session.");
+    console.log(req.session.user);
+    res.status(200).send(req.session.user);
   } catch (error) {
     next(new AppError("internal error",500))
   }
@@ -100,8 +101,8 @@ const loginUser = async (req,res,next)=>{
 
 //LOGOUT user
 const logOutUser = (req, res, next) => {
-  console.log("before destroy session(logout button)");
   req.session.destroy();
+  res.status(200).send({message: "logout successfull"});
 };
 
 //check session
@@ -110,7 +111,7 @@ const checkSession= (req,res,next)=>{
     if (!req.session.user) {
       return next(new AppError("You are not logged in", 500));
     }
-    res.status(200).send({_id:req.session.user._id});
+    res.status(200).send(req.session.user);
   } catch (error) {
     next(new AppError("internal error(check session fd)"));
   }

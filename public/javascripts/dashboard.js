@@ -56,7 +56,7 @@ $(document).ready(async function(){
   $phoneNumberInput.val(userInfo.phone_number)
 
   //update userInfo button 
-  const userInfo_form = $("#userInfo-form").on("submit",async (event)=>{
+  $("#update_btn").on("click",async (event)=>{
     event.preventDefault();
      const updateRequestBody = {};
      if ($firstNameField.val()?.trim())
@@ -71,24 +71,76 @@ $(document).ready(async function(){
      if ($genderFields.val()?.trim())
        updateRequestBody.gender = $genderFields.val();
 
-       
+       const updateResponseObject = await fetch(
+         `http://localhost:9000/api/users/${userInfo._id}`,
+         {
+           method: "PATCH",
+           body: JSON.stringify(updateRequestBody),
+           headers: {
+             "Content-type": "application/json; charset=UTF-8",
+           },
+         }
+       );
+
+       if(updateResponseObject.status>=400 && updateResponseObject.status<600){
+        const updateResponse = await updateResponseObject.json();
+        showMessage(updateResponse?.message,"error");
+        console.log(updateResponse);
+        return;
+       }
+
+       const updateResponse = await updateResponseObject.json();
+       console.log(updateResponse);
+       showMessage("user updated successfully","success");
+       setTimeout(() => {
+        window.location.reload();
+       }, 1500);
 
   })
  
 
 //logout button handling
   const logoutButton = $("#logout-btn");
-  logoutButton.on("click", async (e) => {
+  logoutButton.on("click", async (event) => {
     try {
-      await fetch("http://localhost:9000/api/logout");
-    } catch (error) {}
+      event.preventDefault();
+      const logoutResponseObject=await fetch("http://localhost:9000/api/logout");
+      showMessage("successfull logout","success");
+      setTimeout(() => {
+        window.location.href = "http://localhost:9000/login";
+      }, 1500);
+      
+    } catch (error) {
+      console.log(error);
+    }
   });
 
-  // const responseObject = await fetch("http://localhost:9000/api/users/:", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(requestBody),
-  // });
+  //Delete Button handling
+  $("#delete_btn").on("click",async(event)=>{
+    try {
+      event.preventDefault();
+      const deleteRequestObject= await fetch(`http://localhost:9000/api/users/${userInfo._id}`,{
+        method:"DELETE",
+      });
+
+      if(deleteRequestObject.status>=500 && deleteRequestObject.status<600){
+        const deleteUserResponse = await deleteRequestObject.json();
+        showMessage(deleteUserResponse?.message,"error");
+        return;
+      }
+      const deleteUserResponse = await deleteRequestObject.json();
+        showMessage( `user with username "${deleteUserResponse.username}" deleted successfully`, "success");
+        await fetch("http://localhost:9000/api/logout");
+        setTimeout(() => {
+          window.location.href = "http://localhost:9000/login";
+        }, 1500);
+      
+
+      
+    } catch (error) {
+      console.log(error);
+    }
+
+  })
+
 })

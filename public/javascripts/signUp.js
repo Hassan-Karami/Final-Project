@@ -1,4 +1,4 @@
-$(document).ready(() => {
+$(document).ready(async() => {
     
      function showMessage(message, type) {
       var $messageBox = $("#message-box");
@@ -20,6 +20,13 @@ $(document).ready(() => {
         $messageBox.hide();
       }, 2000);
     }
+
+    //check session
+       const responseObject = await fetch("http://localhost:9000/api/check_session");
+       if(responseObject.status=== 200){
+        window.location.href = "http://localhost:9000/dashboard";
+        return;
+       }
 
 
 
