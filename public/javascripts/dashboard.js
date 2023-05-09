@@ -47,6 +47,12 @@ $(document).ready(async function(){
   const userInfo = await userInfoObject.json();
   console.log(userInfo);
 
+
+  const card_title = $("#card-title");
+  card_title.html(`${userInfo.firstName} ${userInfo.lastName}`);
+  const avatar = $("#avatar");
+  avatar.attr("src",`${userInfo.avatar}`)
+
   $firstNameField.val(userInfo.firstName);
   $lastNameField.val(userInfo.lastName);
   $usernameField.val(userInfo.username);
@@ -59,16 +65,17 @@ $(document).ready(async function(){
   $("#update_btn").on("click",async (event)=>{
     event.preventDefault();
      const updateRequestBody = {};
-     if ($firstNameField.val()?.trim())
+    //  if ($firstNameField.val()?.trim())
        updateRequestBody.firstName = $firstNameField.val();
-     if ($lastNameField.val()?.trim())
+    //  if ($lastNameField.val()?.trim())
        updateRequestBody.lastName = $lastNameField.val();
-     if ($usernameField.val()?.trim())
+    //  if ($usernameField.val()?.trim())
        updateRequestBody.username = $usernameField.val();
-     if ($phoneNumberInput.val()?.trim())
+    //  if ($phoneNumberInput.val()?.trim())
        updateRequestBody.phone_number = $phoneNumberInput.val();
-     if ($roleField.val()?.trim()) updateRequestBody.role = $roleField.val();
-     if ($genderFields.val()?.trim())
+    //  if ($roleField.val()?.trim()) 
+     updateRequestBody.role = $roleField.val();
+    //  if ($genderFields.val()?.trim())
        updateRequestBody.gender = $genderFields.val();
 
        const updateResponseObject = await fetch(

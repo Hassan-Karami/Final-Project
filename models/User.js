@@ -37,6 +37,7 @@ const UserSchema = new mongoose.Schema(
           `${props.value} is not a valid password. Password must have at least 8 characters containing at least 1 letter and 1 digit.`,
       },
     },
+    avatar:{type:String},
 
     phone_number: 
       {

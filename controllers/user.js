@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const {AppError} = require("../utils/AppError");
-
+const { userAvatarUpload } = require("../utils/multer-settings");
+const fs = require("fs/promises");
+const path = require("path");
 
 //GET all bloggers
 const getAllUsers = async(req, res, next) => {
@@ -35,6 +37,7 @@ const createUser = async(req,res,next)=>{
     phone_number: req.body.phone_number,
     username: req.body.username,
     password: req.body.password,
+    avatar: "/images/defaultProfileImage.png",
   };
   try {
     const newUser = await User.create(userCreationBody);
@@ -90,8 +93,7 @@ const loginUser = async (req,res,next)=>{
     if(!isMatch) {
       return next(new AppError("user not found",404))
     }
-    req.session.user = {_id: targetUser._id};
-    console.log("userId sat on session.");
+    req.session.user = {_id: targetUser._id, avatar : targetUser.avatar};
     console.log(req.session.user);
     res.status(200).send(req.session.user);
   } catch (error) {
@@ -113,7 +115,110 @@ const checkSession= (req,res,next)=>{
     }
     res.status(200).send(req.session.user);
   } catch (error) {
-    next(new AppError("internal error(check session fd)"));
+    next(new AppError("internal error(check session fd)",500));
+  }
+}
+
+
+//hhhhhhhhhhhhhh upload avatar
+const uploadAvatar = async (req, res, next) => {
+  const uploadUserAvatar = userAvatarUpload.single("avatar");
+
+  uploadUserAvatar(req, res, async (err) => {
+    if (err) {
+      //delete if save with error
+      // if (req.file) await fs.unlink(path.join(__dirname, "../public", req.file.filename))
+      if (err.message){
+        console.log(err.message);
+        return next(new AppError(err?.message, 400));
+      } 
+      return next(new AppError("server error!", 500));
+    }
+
+    if (!req.file) return res.status(400).send("File not send!");
+
+    try {
+      
+      // delete old avatar
+      //یادت باشه 
+      if (req.session.user.avatar){
+
+
+        const filePath = path.join(
+          __dirname,
+          "../public",
+          req.session.user.avatar
+        );
+        const fileExists = await checkIfFileExists(filePath);
+        if (fileExists) {
+          await fs.unlink(
+            path.join(__dirname, "../public", req.session.user.avatar)
+          );
+        }
+          console.log("file exist");
+        } else {
+          console.log("file doesnt existttt");
+        }
+
+
+
+      
+        
+
+      const user = await User.findByIdAndUpdate(
+        req.session.user._id,
+        {
+          avatar: "/images/userAvatars/" + req.file.filename,
+        },
+        { new: true }
+      );
+
+      req.session.user.avatar = user.avatar;
+
+      // return res.json(user);
+      res.redirect("http://localhost:9000/dashboard");
+    } catch (err) {
+      console.log(err);
+      next(new AppError("server Error", 500));
+    }
+  });
+};
+
+const bulkUpload = (req, res, next) => {
+  const uploadUserAvatar = userAvatarUpload.array("gallery");
+
+  uploadUserAvatar(req, res, async (err) => {
+    if (err) {
+      if (err.message){
+        console.log(err.message);
+        return next(new AppError(err?.message, 400));
+      } 
+      console.log(err);
+      return next(new AppError("server error", 500));
+    }
+
+    console.log(req.file);
+    console.log(req.files);
+
+    res.json({
+      file: req.file,
+      files: req.files,
+    });
+  });
+};
+
+
+async function checkIfFileExists(filePath) {
+  try {
+    await fs.stat(filePath);
+    return true; // File exists
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return false; // File does not exist
+    } else {
+      console.log(error);
+      res.status(500).send("server error");
+    }
   }
 }
 
@@ -126,4 +231,6 @@ module.exports = {
   loginUser,
   logOutUser,
   checkSession,
+  bulkUpload,
+  uploadAvatar,
 };

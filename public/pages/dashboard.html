@@ -10,9 +10,35 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>dashboard page</h1>
+    <div class="container text-center"><h1>User Information</h1></div>
 
-    <button id="logout-btn" class="btn btn-danger">Logout</button>
+
+    
+   
+
+
+    <div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card">
+        <div class="card-body text-center">
+          <img id="avatar" src="/images/defaultProfileImage.png" class="rounded-circle img-thumbnail mb-3" alt="Profile Image">
+          <h5 id="card-title" class="card-title">firstnaem lastname</h5>
+          <!-- <a href="#" class="btn btn-primary">Edit Profile Image</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <div class="container text-center mt-3">
+      <form action="api/uploadAvatar" enctype="multipart/form-data" method="post">
+        <input type="file" name="avatar" id="">
+        <input type="submit" value="updateAvatar">
+    </form>
+  </div>
+
+
 
     <div class="container">
 <form id="userInfo-form">
@@ -58,12 +84,15 @@
   </div>
 
   <button id="update_btn" type="submit" class="btn btn-primary">Update</button>
-  <button id="delete_btn" type="submit" class="btn btn-primary">Delete</button>
+  <button id="delete_btn" type="submit" class="btn btn-warning">Delete</button>
 </form>
     </div>
 
+    
+    <div class="text-center  mt-1 p-2 container"><button id="logout-btn" class="btn btn-danger">Logout</button></div>
+
     <!-- <div id="message-box" class="message-box"></div> -->
-    <div id="message-box" class="message-box">
+    <div  id="message-box" class="message-box">
   <div class="message"></div>
 </div>
 

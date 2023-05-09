@@ -9,6 +9,8 @@ const {
   loginUser,
   logOutUser,
   checkSession,
+  uploadAvatar,
+  bulkUpload
 } = require("../controllers/user");
 
 const { updateUserValidation } = require("../validations/users_validation");
@@ -24,5 +26,8 @@ router.post("/auth/login", loginUser);
 router.get("/logout", logOutUser);
 
 router.get("/check_session", checkSession);
+
+//avatar
+router.post("/uploadAvatar",uploadAvatar);
 
 module.exports = router;

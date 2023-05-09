@@ -26,3 +26,7 @@
 .error {
   background-color: #dc3545;
 }
+#avatar{
+  width: 150px;
+  height: 150px;
+}
