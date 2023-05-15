@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express();
+const usersRoutes = require("./users.routes");
+const authRoutes = require("./auth.routes.js")
+const { isLoggedIn } = require("../middlewares/user.session");
 const {
   getAllUsers,
   createUser,
@@ -10,24 +13,33 @@ const {
   logOutUser,
   checkSession,
   uploadAvatar,
-  bulkUpload
+  bulkUpload,
+  updateUserPasssword,
+  signupUser,
 } = require("../controllers/user");
+
+
 
 const { updateUserValidation } = require("../validations/users_validation");
 
-router.get("/users",getAllUsers);
-router.get("/users/:id", getSingleUser);
-router.post("/users", createUser);
-router.delete("/users/:id",deleteUser)
-router.patch("/users/:id",updateUserValidation, updateUser);
+
+router.use("/users",usersRoutes);
+router.use("/auth",authRoutes)
 
 
-router.post("/auth/login", loginUser);
-router.get("/logout", logOutUser);
 
+
+// router.post("/auth/signup");
 router.get("/check_session", checkSession);
 
 //avatar
-router.post("/uploadAvatar",uploadAvatar);
+router.post("/uploadAvatar",isLoggedIn,uploadAvatar);
+
+//password update 
+
 
 module.exports = router;
+
+
+
+

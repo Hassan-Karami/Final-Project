@@ -1,5 +1,12 @@
 $(document).ready(async function(){
 
+//delay function
+function delayTimePromise(ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+}
+
   function showMessage(message, type) {
     const $messageBox = $("#message-box");
     const $message = $messageBox.find(".message");
@@ -29,6 +36,7 @@ $(document).ready(async function(){
   const $usernameField = $("#username");
   const $phoneNumberInput = $("#phone_number");
   const $registrationDateField = $("#registration_date");
+  const passUpdateBtn = $("#updatePassword-btn");
 
 
   //check session
@@ -104,6 +112,50 @@ $(document).ready(async function(){
        }, 1500);
 
   })
+
+
+  //updateAvatar form on submit
+  const form = $("#updateAvatar_form");
+  const fileInput = document.getElementById("selected_image");
+
+  form.on("submit", async(event) => {
+    event.preventDefault();
+
+    if (fileInput.files && fileInput.files.length > 0) {
+      const formData = new FormData();
+      formData.append("avatar", fileInput.files[0]);
+      const avatarResponseObject = await fetch("api/uploadAvatar", {
+       method: "POST",
+       body: formData,
+     });
+     
+     if(avatarResponseObject.status>=400 && avatarResponseObject.status<600){
+      const avatarResponse = await avatarResponseObject.json();
+      showMessage(avatarResponse?.message,"error");
+      if(avatarResponseObject.status===401){
+          setTimeout(() => {
+            return (window.location.href = "http://localhost:9000/login");
+          }, 1500); 
+      }  
+     }
+     else{
+       showMessage("Profile Image Updated Sudccessfully", "success");
+       setTimeout(() => {
+         window.location.reload();
+       }, 1500);
+
+     }
+
+    
+
+      // Send the form data to the server using the Fetch API or AJAX
+    } else {
+      // Handle case where no file is selected
+      showMessage("No file selected","error");
+      console.log("No file selected");
+    }
+  });
+
  
 
 //logout button handling
@@ -111,7 +163,7 @@ $(document).ready(async function(){
   logoutButton.on("click", async (event) => {
     try {
       event.preventDefault();
-      const logoutResponseObject=await fetch("http://localhost:9000/api/logout");
+      const logoutResponseObject=await fetch("http://localhost:9000/api/auth/logout");
       showMessage("successfull logout","success");
       setTimeout(() => {
         window.location.href = "http://localhost:9000/login";
@@ -121,6 +173,12 @@ $(document).ready(async function(){
       console.log(error);
     }
   });
+
+  //Update Password Button handling
+  passUpdateBtn.on("click",(event)=>{
+    event.preventDefault();
+    window.location.href = "http://localhost:9000/password";
+  })
 
   //Delete Button handling
   $("#delete_btn").on("click",async(event)=>{
@@ -137,7 +195,7 @@ $(document).ready(async function(){
       }
       const deleteUserResponse = await deleteRequestObject.json();
         showMessage( `user with username "${deleteUserResponse.username}" deleted successfully`, "success");
-        await fetch("http://localhost:9000/api/logout");
+        await fetch("http://localhost:9000/api/auth/logout");
         setTimeout(() => {
           window.location.href = "http://localhost:9000/login";
         }, 1500);

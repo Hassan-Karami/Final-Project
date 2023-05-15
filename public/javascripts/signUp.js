@@ -33,7 +33,6 @@ $(document).ready(async() => {
   // Accessing the form fields using jQuery
   const $firstNameField = $("#firstName");
   const $lastNameField = $("#lastName");
-  const $roleField = $("#role");
   const $genderFields = $('#gender');
   const $usernameField = $("#username");
   const $passwordField = $("#password");
@@ -46,7 +45,6 @@ $(document).ready(async() => {
     // Accessing the values of the form fields
     const firstNameValue = $firstNameField.val();
     const lastNameValue = $lastNameField.val();
-    const roleValue = $roleField.val();
     const genderValue = $genderFields.val();
     const phoneNumberValue = $phoneNumberPrefix.text() + $phoneNumberInput.val();
     const usernameValue = $usernameField.val();
@@ -58,12 +56,11 @@ $(document).ready(async() => {
           password: passwordValue,
           firstName: firstNameValue,
           lastName: lastNameValue,
-          role: roleValue,
           gender: genderValue,
           phone_number: phoneNumberValue,
         };
 
-     const responseObject= await fetch("http://localhost:9000/api/users", {
+     const responseObject= await fetch("http://localhost:9000/api/auth/signup", {
        method: "POST",
        headers: {
          "Content-Type": "application/json",
