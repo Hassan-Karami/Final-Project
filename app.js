@@ -1,10 +1,11 @@
 var express = require('express');
 var app = express();
+require("dotenv").config();
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require("mongoose")
-const general_routes = require("./routes/general_routes")
+const root_routes = require("./routes/root.routes")
 const { errorHandler } = require("./services/Error_Handler");
 const AppError = require('./utils/AppError');
 const session = require("express-session");
@@ -30,14 +31,14 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  // console.log(req.session);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(req.session);
+//   next();
+// });
 
 
 
-app.use("/", general_routes);
+app.use("/", root_routes);
 app.use(errorHandler);
 
 

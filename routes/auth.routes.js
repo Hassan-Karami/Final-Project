@@ -1,27 +1,23 @@
 const express = require("express");
 const router = express();
 const { isLoggedIn } = require("../middlewares/user.session");
-const { updateUserValidation } = require("../validations/users_validation");
 const {
-  getAllUsers,
-  createUser,
-  getSingleUser,
-  deleteUser,
-  updateUser,
   loginUser,
   logOutUser,
   checkSession,
-  uploadAvatar,
-  bulkUpload,
-  updateUserPasssword,
   signupUser,
-} = require("../controllers/user");
+} = require("../controllers/auth.controller");
+const {loginValidationSchema,signupValidationSchema} = require("../validations/auth-validation");
+const {validator} = require("../validations/validator");
 
 
 
 
-router.post("/login", loginUser);
+
+
+router.post("/login",validator(loginValidationSchema), loginUser);
 router.get("/logout", isLoggedIn,logOutUser);
-router.post("/signup",signupUser)
+router.post("/signup",validator(signupValidationSchema),signupUser);
+router.get("/check_session", checkSession);
 
 module.exports= router;

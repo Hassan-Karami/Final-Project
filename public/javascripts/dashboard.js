@@ -40,7 +40,7 @@ function delayTimePromise(ms) {
 
 
   //check session
-  const responseObject = await fetch("http://localhost:9000/api/check_session");
+  const responseObject = await fetch("http://localhost:9000/api/auth/check_session");
   if (responseObject.status >= 400 && responseObject.status < 600) {
     const response = await responseObject.json();
     showMessage(response.message, "error");
@@ -51,7 +51,7 @@ function delayTimePromise(ms) {
   }
   const response = await responseObject.json();
   const userId = response._id;
-  const userInfoObject = await fetch(`/api/users/${userId}`);
+  const userInfoObject = await fetch(`/api/account`);
   const userInfo = await userInfoObject.json();
   console.log(userInfo);
 
@@ -87,7 +87,7 @@ function delayTimePromise(ms) {
        updateRequestBody.gender = $genderFields.val();
 
        const updateResponseObject = await fetch(
-         `http://localhost:9000/api/users/${userInfo._id}`,
+         `http://localhost:9000/api/account`,
          {
            method: "PATCH",
            body: JSON.stringify(updateRequestBody),
@@ -124,7 +124,7 @@ function delayTimePromise(ms) {
     if (fileInput.files && fileInput.files.length > 0) {
       const formData = new FormData();
       formData.append("avatar", fileInput.files[0]);
-      const avatarResponseObject = await fetch("api/uploadAvatar", {
+      const avatarResponseObject = await fetch("api/account/uploadAvatar", {
        method: "POST",
        body: formData,
      });
@@ -177,14 +177,14 @@ function delayTimePromise(ms) {
   //Update Password Button handling
   passUpdateBtn.on("click",(event)=>{
     event.preventDefault();
-    window.location.href = "http://localhost:9000/password";
+    window.location.href = `http://localhost:9000/${userId}/password`;
   })
 
   //Delete Button handling
   $("#delete_btn").on("click",async(event)=>{
     try {
       event.preventDefault();
-      const deleteRequestObject= await fetch(`http://localhost:9000/api/users/${userInfo._id}`,{
+      const deleteRequestObject= await fetch(`http://localhost:9000/api/account`,{
         method:"DELETE",
       });
 

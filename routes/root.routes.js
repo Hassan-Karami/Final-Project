@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express();
-const api_routes = require("./api_routes");
-const rendering_routes = require("./rendering_routes");
+const api_routes = require("./api.routes");
+const rendering_routes = require("./view.routes");
 
 router.use("/api",api_routes)
 

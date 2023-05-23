@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const {AppError} = require("../utils/AppError");
-
+const Joi = require("joi");
 
 
 const updateUserValidation = async (req,res,next)=>{
   
 
    try {
-     const id = req.params.id?.trim();
+     const id = req.session.user._id;
      //id validation
      if (!id){ return next(new AppError("id is not valid(empty id)", 400));}
      //not found validation
@@ -89,5 +89,14 @@ const updateUserValidation = async (req,res,next)=>{
    }
 }
 
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)/;
+const changePasswordUserAccountValidationSchema = Joi.object({
+  current_password: Joi.string().required(),
+  new_password: Joi.string().min(8).pattern(passwordRegex).required(),
+});
 
-module.exports = { updateUserValidation };
+
+module.exports = {
+  updateUserValidation,
+  changePasswordUserAccountValidationSchema,
+};

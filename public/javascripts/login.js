@@ -22,7 +22,7 @@ $(document).ready(async function () {
        }
 
        //check session
-       const responseObject = await fetch("http://localhost:9000/api/check_session");
+       const responseObject = await fetch("http://localhost:9000/api/auth/check_session");
        if(responseObject.status=== 200){
         window.location.href = "http://localhost:9000/dashboard";
         return;

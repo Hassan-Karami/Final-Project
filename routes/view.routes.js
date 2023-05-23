@@ -15,14 +15,9 @@ router.use("/dashboard", (req, res) => {
 });
 
 //update Password
-router.get("/password", (req, res) => {
+router.get("/:id/password", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/pages/updatePassword.html"));
 });
-
-
-
-
-
 
 
 
