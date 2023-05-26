@@ -59,11 +59,19 @@ const UserSchema = new mongoose.Schema(
       enum: ["blogger", "admin"],
       default: "blogger",
     },
+    
   },
   {
     timestamps: {
       createdAt: "registration_date",
+      
     },
+    toJSON: {
+          virtuals: true,
+        },
+        toObject: {
+                  virtuals: true,
+                },
   }
 );
 UserSchema.virtual("articles",{

@@ -12,7 +12,7 @@ const getAccount = async (req, res, next) => {
 
     const targetUser = await User.findById(req.session.user._id, {
       password: 0,
-    });
+    }).populate("articles");
     res.status(200).send(targetUser);
   } catch (error) {
     console.log(error);
@@ -30,6 +30,24 @@ const deleteUser = async (req, res, next) => {
     if (!deletedUser) {
       return next(new AppError("user not found", 404));
     }
+    // delete current avatar
+    if (
+      req.session.user.avatar &&
+      req.session.user.avatar !== "/images/defaultProfileImage.png"
+    ) {
+      const filePath = path.join(
+        __dirname,
+        "../public",
+        req.session.user.avatar
+      );
+      const fileExists = await checkIfFileExists(filePath);
+      if (fileExists) {
+        await fs.unlink(
+          path.join(__dirname, "../public", req.session.user.avatar)
+        );
+      } 
+    }
+    req.session.destroy();
     res.status(200).send(deletedUser);
   } catch (error) {
     console.log(error);
@@ -75,7 +93,7 @@ const uploadAvatar = async (req, res, next) => {
   const uploadUserAvatar = userAvatarUpload.single("avatar");
 
   uploadUserAvatar(req, res, async (err) => {
-    console.log(req.body);
+
     if (err) {
       //delete if save with error
       // if (req.file) await fs.unlink(path.join(__dirname, "../public", req.file.filename))
