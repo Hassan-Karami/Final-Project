@@ -13,6 +13,10 @@ const getAccount = async (req, res, next) => {
     const targetUser = await User.findById(req.session.user._id, {
       password: 0,
     }).populate("articles");
+    if (!targetUser) {
+          req.session.destroy();
+          return next(new AppError("user not found", 404));
+        }
     res.status(200).send(targetUser);
   } catch (error) {
     console.log(error);
@@ -105,6 +109,7 @@ const uploadAvatar = async (req, res, next) => {
     }
 
     if (!req.file) return res.status(400).send("File not send!");
+    console.log(req.file);
 
     try {
       // delete old avatar
@@ -130,15 +135,15 @@ const uploadAvatar = async (req, res, next) => {
       }
     }
 
-      const user = await User.findByIdAndUpdate(
-        req.session.user._id,
-        {
-          avatar: "/images/userAvatars/" + req.file.filename,
-        },
-        { new: true }
-      );
+    const user = await User.findByIdAndUpdate(
+      req.session.user._id,
+      { avatar: "/images/userAvatars/" + req.file.filename },
+      { new: true }
+    );
 
-      req.session.user.avatar = user.avatar;
+      
+  
+      req.session.user.avatar =user.avatar;
 
       // return res.json(user);
       res.redirect("http://localhost:9000/dashboard");
@@ -164,10 +169,15 @@ async function checkIfFileExists(filePath) {
   }
 }
 
+
+
+
+
 module.exports = {
   getAccount,
   deleteUser,
   updateUser,
   uploadAvatar,
   updateUserPasssword,
+  
 };

@@ -19,6 +19,11 @@ router.get("/:id/password", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/pages/updatePassword.html"));
 });
 
+//my_articles
+router.get("/my_articles", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/pages/my_articles.html"));
+})
+
 
 
 // default page

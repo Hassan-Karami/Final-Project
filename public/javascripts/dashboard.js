@@ -38,9 +38,8 @@ function delayTimePromise(ms) {
   const $registrationDateField = $("#registration_date");
   const passUpdateBtn = $("#updatePassword-btn");
 
-
-  //check session
-  const responseObject = await fetch("http://localhost:9000/api/auth/check_session");
+ //check session and get user info
+  const responseObject = await fetch("http://localhost:9000/api/account");
   if (responseObject.status >= 400 && responseObject.status < 600) {
     const response = await responseObject.json();
     showMessage(response.message, "error");
@@ -49,10 +48,10 @@ function delayTimePromise(ms) {
     }, 1500);
     return;
   }
-  const response = await responseObject.json();
-  const userId = response._id;
-  const userInfoObject = await fetch(`/api/account`);
-  const userInfo = await userInfoObject.json();
+  const userInfo = await responseObject.json();
+  const userId = userInfo._id;
+  // const userInfoObject = await fetch(`/api/account`);
+  // const userInfo = await userInfoObject.json();
   console.log(userInfo);
 
 
@@ -117,9 +116,11 @@ function delayTimePromise(ms) {
   //updateAvatar form on submit
   const form = $("#updateAvatar_form");
   const fileInput = document.getElementById("selected_image");
+  
 
   form.on("submit", async(event) => {
     event.preventDefault();
+    console.log(fileInput.files);
 
     if (fileInput.files && fileInput.files.length > 0) {
       const formData = new FormData();
