@@ -1,31 +1,53 @@
-$(document).ready(async function(){
+$(document).ready(async function () {
+ try {
+   const articlesContainer = $("#articles-container");
+   const responseObject = await fetch(`http://localhost:9000/api/articles/me`);
+   const articles = await responseObject.json();
+   if(responseObject.status === 401) {
+    showMessage("you are not logged in. login first...","error");
+    setTimeout(() => {
+      window.location.href = "http://localhost:9000/login";
+    }, 1000);
+   }
+   console.log(articles);
+   articles.forEach(function (article) {
+     const card = $('<div class="card mb-3">');
+     const cardBody = $('<div class="card-body">');
+     const cardImg = $(
+       '<img class="float-right ml-3" style="max-width: 200px;">'
+     ).attr("src", `/images/articles/thumbnails/${article.thumbnail}`);
+     const cardTitle = $('<h5 class="card-title">').text(article.title);
+     const cardAuthor = $('<p class="card-text">').text(
+       "By " + article.author.firstName + " " + article.author.lastName
+     );
+     const cardDesc = $('<p class="card-text">').text(
+       article.description + "..."
+     );
 
+     const cardButton = $('<a class="btn btn-primary">').text("More Info");
 
-  //updateAvatar form on submit
-  const form = $("#updateAvatar_form");
-  const fileInput = document.getElementById("selected_thumbnail");
+     const articleId = article._id;
 
-  form.on("submit", async (event) => {
-    event.preventDefault();
-    console.log(fileInput.files);
+     cardButton.attr(
+       "href",
+       `http://localhost:9000/update_article/${articleId}`
+     );
 
-    if (fileInput.files && fileInput.files.length > 0) {
-      const formData = new FormData();
-      formData.append("thumbnail", fileInput.files[0]);
-      const thumbnailResponseObject = await fetch(
-        "api/articles/thumbnail",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+     // Append elements to the card body
+     cardBody.append(cardImg);
+     cardBody.append(cardTitle);
+     cardBody.append(cardAuthor);
+     cardBody.append(cardDesc);
+     cardBody.append(cardButton);
 
-      const thumbnail = await thumbnailResponseObject.json();
-      console.log(thumbnail);
+     // Append card body to the card
+     card.append(cardBody);
 
-    } else {
-      // Handle case where no file is selected
-      console.log("No file selected");
-    }
-  });
-})
+     // Append the card to the articles container
+     articlesContainer.append(card);
+   });
+  
+ } catch (error) {
+  console.log(error?.message);
+ }
+});

@@ -7,20 +7,18 @@ const ArticleSchema = new mongoose.Schema(
       required: true,
       minLength: 3,
     },
-    outline: {
-      type: String,
-      required: true,
-      minLength: 3,
-    },
     thumbnail: {
       type: String,
-      required: true,
+      default: "/images/articleDefaultThumbnail.png",
     },
     content: {
       type: String,
       required: true,
     },
+    description: {type: String},
+
     images: [{ type: String }],
+
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -5,7 +5,7 @@ const validator = validationSchema => {
 		const { error } = validationSchema.validate(req.body);
 
 		if (!!error){
-			console.log(error.message);
+			console.log(error);
 			return next(new AppError(error.message, 400));
 		}
 
