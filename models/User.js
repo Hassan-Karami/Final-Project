@@ -111,4 +111,32 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
   return bcrypt.compare(data, this.password);
 };
 
+// create default admin
+(async (next) => {
+    try {
+        const User = mongoose.model('User',UserSchema);
+        // const adminUser = await User.countDocuments({});
+        const adminUser = await User.findOne({role:'admin'})
+        // console.log(adminUser)
+        if (!adminUser) {
+            const admin = new User({
+              firstName: "admin",
+              lastName: "admin",
+              username: "admin",
+              password: "admin123",
+              gender: "male",
+              avatar: "/images/defaultProfileImage.png",
+              phoneNumber: "+989110000000",
+              role: "admin",
+            });
+            await admin.save();
+            console.log('Default admin user created.');
+        } else {
+        console.log('Admin user already exists.');
+        }
+    } catch (err) {
+        next(err)
+    }
+})()
+
 module.exports = mongoose.model("User", UserSchema);

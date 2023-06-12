@@ -1,15 +1,49 @@
 $(document).ready(async function () {
  try {
+  const paginationUl = $("#paginationUl");
    const articlesContainer = $("#articles-container");
-   const responseObject = await fetch(`http://localhost:9000/api/articles/me`);
-   const articles = await responseObject.json();
+   const queryString = window.location.search;
+   const urlParams = new URLSearchParams(queryString);
+   //get pagenumber form query string
+   let page = urlParams.get("page");
+   if (!page) page = 1;
+
+   //get limit number from query string
+   let limit = urlParams.get("limit");
+   if (!limit) limit = 3;
+   //fetch data 
+   const responseObject = await fetch(`http://localhost:9000/api/articles/me?page=${page}`);
+   const data = await responseObject.json();
    if(responseObject.status === 401) {
     showMessage("you are not logged in. login first...","error");
     setTimeout(() => {
       window.location.href = "http://localhost:9000/login";
     }, 1000);
    }
+   const total = data.total;
+   const pages = data.pages;
+   console.log("total articles: " + total);
+   console.log("total pages: " + pages);
+   const articles = data.data;
    console.log(articles);
+
+   //generate pagination 
+        for (let i = 0; i < pages; i++) {
+          if (i + 1 == page) {
+            paginationUl.append(
+              `<li  class="page-item"><a class="page-link active" href="http://localhost:9000/my_articles?page=${
+                i + 1
+              }">${i + 1}</a></li>`
+            );
+          } else {
+            paginationUl.append(
+              `<li  class="page-item"><a class="page-link" href="http://localhost:9000/my_articles?page=${
+                i + 1
+              }">${i + 1}</a></li>`
+            );
+          }
+        }
+   //generate article cards     
    articles.forEach(function (article) {
      const card = $('<div class="card mb-3">');
      const cardBody = $('<div class="card-body">');
