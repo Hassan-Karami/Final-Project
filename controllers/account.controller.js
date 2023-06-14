@@ -4,12 +4,15 @@ const { AppError } = require("../utils/AppError");
 const { userAvatarUpload } = require("../utils/multer-settings");
 const fs = require("fs/promises");
 const path = require("path");
+const Comment = require("../models/Comment")
+const Article = require("../models/Article");
+const {deleteArticleById} = require("../services/article.services")
 
 
 //GET single user
 const getAccount = async (req, res, next) => {
   try {
-
+    
     const targetUser = await User.findById(req.session.user._id, {
       password: 0,
     }).populate("articles");
@@ -28,6 +31,19 @@ const getAccount = async (req, res, next) => {
 //DELETE user
 const deleteUser = async (req, res, next) => {
   try {
+    //start changes
+    const userArticles = await Article.find({author: req.session.user._id});
+    console.log(userArticles);
+    //delete articles of user
+    if (userArticles && userArticles.length > 0) {
+      for (let i = 0; i < userArticles.length; i++) {
+        deleteArticleById(userArticles[i]._id);
+      }
+    }
+
+    // //delete all comments of the user
+    await Comment.deleteMany({ user: req.session.user._id });
+
     const deletedUser = await User.findByIdAndDelete(req.session.user._id, {
       new: true,
     });
@@ -49,7 +65,7 @@ const deleteUser = async (req, res, next) => {
         await fs.unlink(
           path.join(__dirname, "../public", req.session.user.avatar)
         );
-      } 
+      }
     }
     req.session.destroy();
     res.status(200).send(deletedUser);
