@@ -14,17 +14,22 @@ $(document).ready(async function () {
    //fetch data 
    const responseObject = await fetch(`http://localhost:9000/api/articles/me?page=${page}`);
    const data = await responseObject.json();
+   console.log(responseObject);
    if(responseObject.status === 401) {
     showMessage("you are not logged in. login first...","error");
     setTimeout(() => {
       window.location.href = "http://localhost:9000/login";
     }, 1000);
    }
+   
    const total = data.total;
    const pages = data.pages;
    console.log("total articles: " + total);
    console.log("total pages: " + pages);
    const articles = data.data;
+   if(articles.length<1) {
+    return showMessage("no article registered for this user", "error");
+   }
    console.log(articles);
 
    //generate pagination 

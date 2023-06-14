@@ -15,7 +15,7 @@ const ArticleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    description: {type: String},
+    description: { type: String },
 
     images: [{ type: String }],
 
@@ -23,6 +23,12 @@ const ArticleSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
   },
   {
     timestamps: {

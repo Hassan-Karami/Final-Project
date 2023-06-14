@@ -80,6 +80,12 @@ UserSchema.virtual("articles",{
     foreignField: "author",
 })
 
+UserSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "user",
+});
+
 UserSchema.pre("save", async function (next) {
   if (!this.isNew && !this.isModified("password")) return next();
 
@@ -126,7 +132,7 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
               password: "admin123",
               gender: "male",
               avatar: "/images/defaultProfileImage.png",
-              phoneNumber: "+989110000000",
+              phone_number: "+989110000000",
               role: "admin",
             });
             await admin.save();

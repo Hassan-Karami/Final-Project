@@ -10,7 +10,7 @@ const isOwnerOfArticle = async(req,res,next) =>{
       !targetArticle ||
       targetArticle.author.toString() !== req.session.user._id
     ) {
-      return next(new AppError("you are not the owner of this article.", 400));
+      return next(new AppError("you are not the owner of this article.", 403));
     }   
     next();
 }

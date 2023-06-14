@@ -20,6 +20,12 @@ $(document).ready( async ()=> {
           window.location.href = "http://localhost:9000/login";
         }, 1000);
       }
+      if(responseObject.status === 403){
+          showMessage("authorization error for article", "error");
+          setTimeout(() => {
+            window.location.href = "http://localhost:9000/my_articles";
+          }, 1000);
+      }
       console.log(article);
       //fill thumbnail section
       thumbnail.attr("src", `/images/articles/thumbnails/${article.thumbnail}`);
@@ -111,10 +117,11 @@ $(document).ready( async ()=> {
             method: "DELETE",
           }
         );
+        console.log(responseObject);
         const response = await responseObject.json();
         console.log(response);
        
-        if (responseObject.status >= 400 && response.status < 600) {
+        if (responseObject.status >= 400 && responseObject.status < 600) {
           showMessage(response.message, "error");
         }
         if (responseObject.status === 200) {

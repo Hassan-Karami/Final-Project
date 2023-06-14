@@ -7,6 +7,7 @@ const { asyncHandler } = require("../utils/async-handler");
 const { join } = require("node:path");
 const fs = require("fs/promises");
 const {multerUpload,} = require("../utils/multer-settings");
+const Comment = require("../models/Comment");
 
 //CREATE article
 const createArticle = asyncHandler(async (req, res, next) => {
@@ -41,11 +42,13 @@ const getAllArticles = async (req, res, next) => {
   if(!limit) limit = 3;
   if(!page) page = 1;
   
+
+  
   try {
     const query = Article.find({}).populate(
       "author",
       "_id firstName lastName username"
-    ); 
+    ).populate("comments","_id firstName lastName avatar"); 
    const total = await Article.countDocuments();
    const pages = Math.ceil(total/limit || 1)
     const articles = await paginate(query, page,limit);
@@ -79,7 +82,7 @@ const allMyArticles = async (req, res, next) => {
 //GET article by id
 const getArticleById = asyncHandler(async (req, res, next) => {
   const articleId = req.params.id;
-  const targetArticle = await Article.findById(articleId).populate("author");
+  const targetArticle = await Article.findById(articleId).populate("author").populate("comments","_id");
   res.status(200).json(targetArticle);
 });
 
@@ -124,6 +127,7 @@ const updateArticle = asyncHandler(async (req, res, next) => {
   res.status(200).send(newArticle);
 });
 
+
 //DELETE Article
 const deleteArticleById = asyncHandler(async (req, res, next) => {
   const articleId = req.params.id;
@@ -154,6 +158,9 @@ const deleteArticleById = asyncHandler(async (req, res, next) => {
        }
      }
   }
+  //delete comments under the article
+  await Comment.deleteMany({article : articleId});
+  
   await Article.findByIdAndDelete(articleId);
   res.status(200).send({ message: `article with id ${articleId} deleted successfully` });
 });
