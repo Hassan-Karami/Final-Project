@@ -11,7 +11,7 @@ const Comment = require("../models/Comment");
 
 
 //DELETE Article
-const deleteArticleById = asyncHandler(async (articleId) => {
+const articleRemover = asyncHandler(async (articleId) => {
 
   const targetArticle = await Article.findById(articleId);
   //delete thumbnail
@@ -49,4 +49,4 @@ const deleteArticleById = asyncHandler(async (articleId) => {
 
 
 
-module.exports = { deleteArticleById };
+module.exports = { articleRemover };

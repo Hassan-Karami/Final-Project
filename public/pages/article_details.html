@@ -11,9 +11,9 @@
 </head>
 <body>
 
-    <div class="container   h-100 rounded">
+    <div class="container    h-100 rounded">
 
-      <div class=" border border-primary rounded p-2 mt-2 d-flex justify-content-between align-items-center" >
+      <div class=" border  p-2 mt-2 d-flex justify-content-between align-items-center" >
         <div>
           <p>Title: <span style="font-size: 24px; font-weight: bold;" id="title"></span> </p>
           <p>Author: <span style="font-weight: bold;" id="author"></span></p>
@@ -27,19 +27,42 @@
       </div>
       <div id="content_container" class="m-2 p-2">
         <p id="content">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo accusantium unde ipsum sint ratione fuga illo. Dolores quibusdam autem modi, quod reprehenderit eligendi, accusamus praesentium ut corporis qui aliquam? Temporibus placeat ab quo laborum, eos inventore tempore optio iste. Aliquid molestiae ea voluptas soluta itaque repellat iure repellendus accusamus consectetur, non voluptatum, dolore odit. Necessitatibus, laborum incidunt pariatur sint voluptatum qui est quasi quia cum in modi, nobis dolorem rem neque distinctio sunt natus a aliquid. Quod voluptates, quae neque quisquam corrupti mollitia fuga odit placeat accusantium temporibus. Saepe nisi quaerat illum iure, sit distinctio itaque nihil ipsam quibusdam delectus voluptates nobis placeat fugiat quod! Error veritatis fuga inventore aliquam quisquam quibusdam dolores quasi id optio quod iusto recusandae, quas ex aperiam, sit, quis alias nemo possimus nulla amet? Tempora, eos itaque ipsa unde fugit iste quis animi quos labore velit numquam quia culpa ex, corrupti deleniti nesciunt architecto expedita provident a ratione vel! Exercitationem obcaecati explicabo velit, eius delectus at, distinctio non perferendis, maiores modi quis eligendi mollitia. Veritatis facilis ipsum ab, repellendus quia expedita quas nostrum, ut a neque possimus nulla? Corrupti, et. Inventore labore ipsum suscipit ab atque. Saepe magni dolores ratione unde nisi soluta iure, nobis vel molestiae praesentium. Amet in veniam fugiat, maxime consequatur optio! Tempore iure temporibus exercitationem obcaecati tenetur reprehenderit laudantium eius aliquid magni perspiciatis ipsum a doloribus pariatur, suscipit alias in? Nostrum quas vel exercitationem animi nemo facere! Sint voluptatibus molestiae itaque totam voluptas rerum atque odio molestias illo cupiditate eum laboriosam hic nemo, natus accusantium quod dolore ducimus aperiam voluptatem nam! Aspernatur mollitia qui unde voluptates at veritatis quasi corporis, magnam hic provident, esse illo eveniet in laudantium delectus, sed corrupti iure voluptatibus ducimus vitae voluptas quisquam beatae minima. Nobis ullam ab illum cupiditate excepturi iure est dolorem quas maiores dicta similique vero, nesciunt debitis natus aspernatur quis eveniet, odio quibusdam repellat? Labore nobis eos impedit, ex nostrum saepe rem voluptatem 
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </p>
 
-      </div>
-      <div style="margin-top: 15px; width: 100%; height: 200px;" id="image-container"></div>
-    </div >
 
-  
+      </div>
+      <h3>Images:</h3>
+      <div style="margin-top: 15px; width: 100%; height: 200px;" id="image-container"></div>
+      <!--leave comment box-->
+       <div class=" col-12 mt-4">
+                <form id="algin-form">
+                    <div class="form-group">
+                        <h4>Leave a comment</h4>
+                        <label for="message">Message</label>
+                        <textarea  name="msg" id="comment_msg" cols="30" rows="5" class="form-control" style="background-color: black; color:white"></textarea>
+                    </div>
+                   
+                    <div class="form-group mt-2">
+                        <button  type="button" id="postCommentButton" class="btn bg-warning">Post Comment</button>
+                    </div>
+                </form>
+            </div>
+    </div >
 
     
 
+    <!-- comments section -->
+    <section class="mt-4">
+      <div class="container border border-warning p-4 rounded">
+        <div id="commentBoxesContainer" class="row">
+          <h1>Comments:</h1>
+        </div>
+       
+      </div>
+    </section>
 
-
+  
        <!-- <div id="message-box" class="message-box"></div> -->
     <div  id="message-box" class="message-box">
   <div class="message"></div>

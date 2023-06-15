@@ -19,7 +19,7 @@ router.get("/:commentId", getCommentById);
 
 router.get("/", getAllComments);
 
-router.post("/", isLoggedIn,createComment);
+router.post("/",isLoggedIn,createComment);
 
 router.patch("/:commentId",isLoggedIn, isOwnerOfComment ,updateComment);
 

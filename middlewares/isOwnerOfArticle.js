@@ -4,8 +4,12 @@ const {AppError} = require("../utils/AppError");
 
 const isOwnerOfArticle = async(req,res,next) =>{
     const articleId = req.params.id;
+    const requsterUser = await User.findById(req.session.user._id);
 
     const targetArticle = await Article.findById(articleId);
+    if(!!targetArticle && requsterUser.role === "admin"){
+      return next();
+    }
     if (
       !targetArticle ||
       targetArticle.author.toString() !== req.session.user._id

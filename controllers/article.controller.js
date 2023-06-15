@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Article = require("../models/Article");
 const {paginate} = require("../utils/pagination")
 const {checkIfFileExists} = require("../services/checkFileExistance");
@@ -8,6 +9,8 @@ const { join } = require("node:path");
 const fs = require("fs/promises");
 const {multerUpload,} = require("../utils/multer-settings");
 const Comment = require("../models/Comment");
+
+
 
 //CREATE article
 const createArticle = asyncHandler(async (req, res, next) => {
@@ -42,13 +45,11 @@ const getAllArticles = async (req, res, next) => {
   if(!limit) limit = 3;
   if(!page) page = 1;
   
-
-  
   try {
-    const query = Article.find({}).populate(
-      "author",
-      "_id firstName lastName username"
-    ).populate("comments","_id firstName lastName avatar"); 
+    const query = Article.find({})
+      .populate("author", "_id firstName lastName username")
+      .populate("comments", "_id firstName lastName avatar")
+      .sort({ registration_date : -1}); 
    const total = await Article.countDocuments();
    const pages = Math.ceil(total/limit || 1)
     const articles = await paginate(query, page,limit);
@@ -68,7 +69,7 @@ const allMyArticles = async (req, res, next) => {
   try {
     const query = Article.find({
       author: req.session.user._id,
-    });
+    }).sort({ registration_date: -1 });
     const total = await Article.countDocuments();
     const pages = Math.ceil(total / limit || 1);
     const articles = await paginate (query,page, limit)
@@ -104,17 +105,23 @@ const updateArticle = asyncHandler(async (req, res, next) => {
         __dirname,
         `../public/images/articles/thumbnails/${targetArticle.thumbnail}`
       );
-      fs.unlink(oldThumbnailPath);
+      const isExisted = await checkIfFileExists(oldThumbnailPath);
+      if(!!isExisted){fs.unlink(oldThumbnailPath);}
+      
     }
   }
   //update images
   if (!!req.files.images && req.files.images.length > 0) {
     const newImagesName = await resizeArticleImages(articleId, req.files);
     updateBody.images = newImagesName;
+    //delete old images
     for (let image of targetArticle.images) {
-      await fs.unlink(
-        join(__dirname, `../public/images/articles/images/${image}`)
-      );
+      const oldImageFilePath = join( __dirname,`../public/images/articles/images/${image}`);
+      //check if this path is existed now?
+      const isExisted = await checkIfFileExists(oldImageFilePath);
+      if(!!isExisted){
+        await fs.unlink(oldImageFilePath);}
+     ;
     }
   }
   //update body info
@@ -166,13 +173,30 @@ const deleteArticleById = asyncHandler(async (req, res, next) => {
 });
 
 
-//Image and Thumbnail 
+//Get Comments of an article by articleId
+const getCommentsOfAnArticle = asyncHandler(async (req, res, next) => {
+  const articleId = req.params.id;
+   const targetArticle = await Article.findById(articleId);
+   if(!targetArticle){
+     return next(new AppError(`article with id ${articleId} doesnt exist`,404))
+    }
+  const comments = await Comment.find({
+    article: articleId,
+  }).populate({ path: "user", select: "-password" });
+  res.status(200).json(comments);
+}); 
+
+
+
+//parse thumbnail and images fields by multer 
 const articleThumbnailDefault = "default-article-thumbnail.jpeg";
 const uploadArticleImages = multerUpload.fields([
   { name: "thumbnail", maxCount: 1 },
   { name: "images", maxCount: 5 },
 ]);
 
+
+//Resize Article thumbnai by Sharp 
 const resizeArticleThumbnail = async (articleId, files) => {
   const { thumbnail = [] } = files;
 
@@ -194,6 +218,9 @@ const resizeArticleThumbnail = async (articleId, files) => {
   return articleThumbnailFilename;
 };
 
+
+
+//Resize Article Image by Sharp
 const resizeArticleImages = async (articleId, files) => {
   const { images = [] } = files;
 
@@ -228,5 +255,5 @@ module.exports = {
   getArticleById,
   updateArticle,
   deleteArticleById,
-
+  getCommentsOfAnArticle,
 };

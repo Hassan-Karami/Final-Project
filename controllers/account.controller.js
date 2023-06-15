@@ -6,7 +6,15 @@ const fs = require("fs/promises");
 const path = require("path");
 const Comment = require("../models/Comment")
 const Article = require("../models/Article");
-const {deleteArticleById} = require("../services/article.services")
+const { articleRemover } = require("../services/article.services");
+const { checkIfFileExists } = require("../services/checkFileExistance");
+
+
+
+
+
+
+
 
 
 //GET single user
@@ -37,10 +45,9 @@ const deleteUser = async (req, res, next) => {
     //delete articles of user
     if (userArticles && userArticles.length > 0) {
       for (let i = 0; i < userArticles.length; i++) {
-        deleteArticleById(userArticles[i]._id);
+        articleRemover(userArticles[i]._id);
       }
     }
-
     // //delete all comments of the user
     await Comment.deleteMany({ user: req.session.user._id });
 
@@ -75,7 +82,7 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-//UPDATE user
+//UPDATE user info
 const updateUser = async (req, res, next) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.session.user._id, req.body, {
@@ -169,22 +176,6 @@ const uploadAvatar = async (req, res, next) => {
     }
   });
 };
-
-
-async function checkIfFileExists(filePath) {
-  try {
-    await fs.stat(filePath);
-    return true; // File exists
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      return false; // File does not exist
-    } else {
-      console.log(error);
-      res.status(500).send("server error");
-    }
-  }
-}
-
 
 
 

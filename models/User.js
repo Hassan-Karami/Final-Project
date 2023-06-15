@@ -146,3 +146,7 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
 })()
 
 module.exports = mongoose.model("User", UserSchema);
+
+
+
+

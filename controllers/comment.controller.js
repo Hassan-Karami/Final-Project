@@ -7,8 +7,10 @@ const { AppError } = require("../utils/AppError");
 
 //CREATE comment
 const createComment = asyncHandler(async (req,res,next) =>{
+  
     const { content, articleId } = req.body;
     const targetArticle = await Article.findById(articleId);
+    console.log(req.body);
     //check if article exists
     if(!targetArticle){
        return next(new AppError("Article not found", 404))
