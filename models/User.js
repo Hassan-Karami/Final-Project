@@ -129,7 +129,7 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
               firstName: "admin",
               lastName: "admin",
               username: "admin",
-              password: "Admin@123",
+              password: "Pass1234",
               gender: "male",
               avatar: "/images/defaultProfileImage.png",
               phone_number: "+989110000000",

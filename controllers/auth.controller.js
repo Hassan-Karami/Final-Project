@@ -18,7 +18,7 @@ const loginUser = async (req, res, next) => {
     if (!isMatch) {
       return next(new AppError("username or password is not matched", 404));
     }
-    req.session.user = { _id: targetUser._id, avatar: targetUser.avatar };
+    req.session.user = { _id: targetUser._id, avatar: targetUser.avatar, role: targetUser.role };
     res.status(200).send(req.session.user);
   } catch (error) {
     next(new AppError("internal error", 500));

@@ -47,6 +47,8 @@ router.get("/update_article/:id",(req, res) => {
 
 
 
+
+
 // default page
 router.use("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/pages/home.html"));

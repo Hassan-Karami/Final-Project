@@ -20,10 +20,14 @@ $(document).ready(async function () {
            $messageBox.hide();
          }, 2000);
        }
-
-       //check session
+       
+       //check session and dont let user to stay in login page he is loggedin
        const responseObject = await fetch("http://localhost:9000/api/auth/check_session");
+       console.log(responseObject.status);
+       
        if(responseObject.status=== 200){
+        const userProperties = await responseObject.json();
+        console.log(userProperties);
         window.location.href = "http://localhost:9000/dashboard";
         return;
        }
@@ -51,10 +55,19 @@ $(document).ready(async function () {
     }
 
     const response = await responseObject.json();
-    showMessage("successfull login", "success");
-    setTimeout(() => {
-      window.location.href = `http://localhost:9000/dashboard`;
-    }, 1000);
+    if(response.role === "admin"){
+      showMessage("successfull login", "success");
+      setTimeout(() => {
+        window.location.href = `http://localhost:9000/admin`;
+      }, 1000);
+    }
+    else{
+      showMessage("successfull login", "success");
+      setTimeout(() => {
+        window.location.href = `http://localhost:9000/dashboard`;
+      }, 1000);
+    }
+    
     console.log(response); 
   });
 });

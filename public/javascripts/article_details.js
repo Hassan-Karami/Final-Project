@@ -148,3 +148,22 @@ async function requestToUpdateComment(commentId) {
   }
   console.log(updateCommentResponse);
 }
+
+
+
+async function requestToDeleteComment(commentId) {
+  const deleteCommentRequestObject = await fetch(
+    `http://localhost:9000/api/comments/${commentId}`,
+    {
+      method: "DELETE"
+    }
+  );
+  const deleteCommentResponse = await deleteCommentRequestObject.json();
+  if (deleteCommentRequestObject.status === 200) {
+    showMessage("comment deleted successfully", "success");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  }
+  console.log(updateCommentResponse);
+}
