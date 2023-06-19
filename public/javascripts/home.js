@@ -29,6 +29,7 @@ $(document).ready(async function () {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
+  
   //get pagenumber form query string
   let page = urlParams.get("page");
   if (!page) page = 1;
@@ -37,6 +38,17 @@ $(document).ready(async function () {
   let limit = urlParams.get("limit");
   if (!limit) limit = 3;
 
+  //get searcht text
+  let searchText = urlParams.get("search");
+  
+
+  let UrlOfGettingArticles;
+
+  if(!!searchText) UrlOfGettingArticles= `http://localhost:9000/api/articles?page=${page}&search=${searchText}`;
+  else{
+    UrlOfGettingArticles= `http://localhost:9000/api/articles?page=${page}`;
+  }
+
   //search button handling
   const search_input = $("#search_input");
 
@@ -44,12 +56,15 @@ $(document).ready(async function () {
 
   search_btn.on("click", async (e) => {
     e.preventDefault();
-    const searhTerm = search_input.val().trim();
-    console.log(searhTerm);
+    const searchInputText = search_input.val().trim();
+    window.location.href = `http://localhost:9000?search=${searchInputText}`;
+    
   });
 
+  
+
   // Fetch articles from the server
-  fetch(`http://localhost:9000/api/articles?page=${page}`) // Replace with your API endpoint
+  fetch(UrlOfGettingArticles) // Replace with your API endpoint
     .then((response) => response.json())
     .then((data) => {
       const total = data.total;
