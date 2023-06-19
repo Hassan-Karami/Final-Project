@@ -44,22 +44,33 @@ const getAllArticles = async (req, res, next) => {
   let {page , limit} = req.query;
   if(!limit) limit = 3;
   if(!page) page = 1;
+  let query;
   
   try {
-    const query = Article.find({})
-      .populate("author", "_id firstName lastName username")
-      .populate("comments", "_id firstName lastName avatar")
-      .sort({ registration_date : -1}); 
-   const total = await Article.countDocuments();
-   const pages = Math.ceil(total/limit || 1)
-    const articles = await paginate(query, page,limit);
-    // console.log(articles);
+    const searchText = req.query.search;
+    if(!!searchText){
+        query = Article.find({title: {$regex: searchText, $options:"i"}})
+        .populate("author", "_id firstName lastName username")
+        .populate("comments", "_id firstName lastName avatar")
+        .sort({ registration_date: -1 }); 
+    }
+    else{
+        query = Article.find({})
+        .populate("author", "_id firstName lastName username")
+        .populate("comments", "_id firstName lastName avatar")
+        .sort({ registration_date: -1 });
+    }
+     
+   const total = await Article.countDocuments(query);
+   const pages = Math.ceil(total/limit || 1);
+  const articles = await paginate(query, page,limit);
     res.status(200).json({total: total ,pages: pages , data: articles});
   } catch (error) {
     console.log(error);
     next(new AppError("internal error", 500));
   }
 };
+
 
 //GET all my articles
 const allMyArticles = async (req, res, next) => {

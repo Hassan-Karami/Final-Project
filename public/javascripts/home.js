@@ -1,14 +1,31 @@
-$(document).ready(function () {
+$(document).ready(async function () {
   var articlesContainer = $("#articles-container");
   const paginationUl = $("#paginationUl");
 
-  // this.handlePaginationButton = (element) => {
-  //    const active = $(".active");
-  //    active[0].classList.remove("active");
-  //    element.classList.add("active");  
-  // };
+  let userRole = "unknown";
 
- 
+  //check session
+  const chechSession = await checkSession();
+  if (chechSession !== false && chechSession.role === "admin") {
+    userRole = "admin";
+  }
+
+  //logout button handling
+  const logoutButton = $("#logout-anchor");
+  logoutButton.on("click", async (event) => {
+    try {
+      event.preventDefault();
+      const logoutResponseObject = await fetch(
+        "http://localhost:9000/api/auth/logout"
+      );
+      showMessage("successfull logout", "success");
+      setTimeout(() => {
+        window.location.href = "http://localhost:9000/login";
+      }, 1500);
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -19,6 +36,17 @@ $(document).ready(function () {
   //get limit number from query string
   let limit = urlParams.get("limit");
   if (!limit) limit = 3;
+
+  //search button handling
+  const search_input = $("#search_input");
+
+  const search_btn = $("#search_btn");
+
+  search_btn.on("click", async (e) => {
+    e.preventDefault();
+    const searhTerm = search_input.val().trim();
+    console.log(searhTerm);
+  });
 
   // Fetch articles from the server
   fetch(`http://localhost:9000/api/articles?page=${page}`) // Replace with your API endpoint
@@ -31,25 +59,22 @@ $(document).ready(function () {
       var articles = data.data;
 
       for (let i = 0; i < pages; i++) {
-        if(i+1 == page){
-            paginationUl.append(
-              `<li  class="page-item"><a class="page-link active" href="http://localhost:9000?page=${
-                i + 1
-              }">${i + 1}</a></li>`
-            );
+        if (i + 1 == page) {
+          paginationUl.append(
+            `<li  class="page-item"><a class="page-link active" href="http://localhost:9000?page=${
+              i + 1
+            }">${i + 1}</a></li>`
+          );
+        } else {
+          paginationUl.append(
+            `<li  class="page-item"><a class="page-link" href="http://localhost:9000?page=${
+              i + 1
+            }">${i + 1}</a></li>`
+          );
         }
-        else{
-           paginationUl.append(
-             `<li  class="page-item"><a class="page-link" href="http://localhost:9000?page=${
-               i + 1
-             }">${i + 1}</a></li>`
-           );
-
-        }
-        
       }
 
-      // Loop through each article and create a card for it
+      // iterate through each article and create a card for it
       articles.forEach(function (article) {
         console.log(article);
         var card = $('<div class="card mb-3">');
@@ -80,6 +105,16 @@ $(document).ready(function () {
         cardBody.append(cardAuthor);
         cardBody.append(cardDesc);
         cardBody.append(cardButton);
+        if (userRole === "admin") {
+          const editButton = $('<a class="btn btn-warning">').text(
+            "Edit Article"
+          );
+          editButton.attr(
+            "href",
+            `http://localhost:9000/update_article/${articleId}`
+          );
+          cardBody.append(editButton);
+        }
 
         // Append card body to the card
         card.append(cardBody);
@@ -92,4 +127,3 @@ $(document).ready(function () {
       console.log("Error retrieving articles:", error);
     });
 });
-

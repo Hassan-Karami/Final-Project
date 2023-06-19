@@ -21,7 +21,8 @@ const {
 } = require("../controllers/user.controller");
 
 router.get("/:userId", isLoggedIn, restrictTo("admin"), getUserById);
-router.get("/", isLoggedIn,restrictTo("admin"), getAllUsers);
+//remember to add login and restrict 
+router.get("/",isLoggedIn , restrictTo("admin"), getAllUsers); 
 router.delete("/:userId",isLoggedIn , restrictTo("admin") ,deleteUserById);
 router.patch("/:userId",isLoggedIn , restrictTo("admin"), updateUserById);
 router.put(

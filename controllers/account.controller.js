@@ -11,12 +11,6 @@ const { checkIfFileExists } = require("../services/checkFileExistance");
 
 
 
-
-
-
-
-
-
 //GET single user
 const getAccount = async (req, res, next) => {
   try {

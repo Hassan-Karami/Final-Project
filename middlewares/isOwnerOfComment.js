@@ -4,8 +4,14 @@ const Comment = require("../models/Comment");
 const {AppError} = require("../utils/AppError");
 
 const isOwnerOfComment = async(req,res,next) =>{
-    const {commentId} = req.params;
+   
+    const requsterUser = await User.findById(req.session.user._id);
+    if(requsterUser.role === "admin"){
+      return next();
+    }
 
+   
+     const { commentId } = req.params;
     const targetComment = await Comment.findById(commentId);
     if (
       !targetComment ||

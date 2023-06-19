@@ -5,6 +5,7 @@ const Comment = require("../models/Comment");
 const { userAvatarUpload } = require("../utils/multer-settings");
 const { checkIfFileExists } = require("../services/checkFileExistance");
 const { AppError } = require("../utils/AppError");
+const { paginate } = require("../utils/pagination");
 const {articleRemover} = require("../services/article.services");
 const fs = require("fs/promises");
 const path = require("path");
@@ -14,8 +15,17 @@ const path = require("path");
 //GET all users
 const getAllUsers = async (req, res, next) => {
   try {
-    const usersList = await User.find({},{password:0,__v:0});
-    res.status(200).send(usersList);
+    let { page, limit } = req.query;
+    if (!limit) limit = 3;
+    if (!page) page = 1;
+    const query = User.find({}, { password: 0, __v: 0 }).sort({
+      registration_date: -1,
+    });
+    const total = await User.countDocuments();
+    const pages = Math.ceil(total / limit || 1);
+    const usersList = await paginate(query, page, limit);
+    res.status(200).send({ total: total, pages: pages, data: usersList });
+    
   } catch (error) {
     console.log(error);
     next(new AppError("internal Error", 500));

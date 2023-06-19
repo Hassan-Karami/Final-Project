@@ -53,6 +53,7 @@ const getAllMyComments = asyncHandler(async (req, res, next) => {
  res.status(200).send(comments);
 });
 
+//Update comment
 const updateComment = asyncHandler(async (req, res, next) => {
  const {commentId} = req.params;
  const {content} = req.body;
@@ -64,6 +65,7 @@ const updateComment = asyncHandler(async (req, res, next) => {
  res.status(200).send(updatedComment);
 });
 
+//Delete comment
 const deleteComment = asyncHandler(async (req, res, next) => {
   const { commentId } = req.params;
   await Comment.findByIdAndDelete(commentId);

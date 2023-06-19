@@ -11,6 +11,8 @@ $(document).ready(async function () {
       showMessage("an error eccured", "error");
     }
 
+    let isAdmin = false;
+
     // check session and get userId if user is LoggedIn
     let userId;
     const checkSessionObject = await fetch(
@@ -20,6 +22,12 @@ $(document).ready(async function () {
     if (checkSessionObject.status === 200) {
       userId = checkSessionResponse._id;
       console.log("user id is: " + userId);
+    }
+    if (
+      checkSessionObject.status === 200 &&
+      checkSessionResponse.role === "admin"
+    ) {
+      isAdmin = true;
     }
 
     const article = await data.json();
@@ -50,7 +58,7 @@ $(document).ready(async function () {
     );
     const comments = await responseObject.json();
     for (let i = 0; i < comments.length; i++) {
-      if (comments[i].user._id === userId) {
+      if (comments[i].user._id === userId || isAdmin === true) {
         commentBoxesContainer.append(
           `<div class="comment mt-4 text-justify float-left">
                     <img id="comment_img" src="${
@@ -140,8 +148,8 @@ async function requestToUpdateComment(commentId) {
     }
   );
   const updateCommentResponse = await updateCommentRequestObject.json();
-  if(updateCommentRequestObject.status === 200){
-    showMessage("comment updated successfully", 'success');
+  if (updateCommentRequestObject.status === 200) {
+    showMessage("comment updated successfully", "success");
     setTimeout(() => {
       window.location.reload();
     }, 1000);
@@ -149,13 +157,11 @@ async function requestToUpdateComment(commentId) {
   console.log(updateCommentResponse);
 }
 
-
-
 async function requestToDeleteComment(commentId) {
   const deleteCommentRequestObject = await fetch(
     `http://localhost:9000/api/comments/${commentId}`,
     {
-      method: "DELETE"
+      method: "DELETE",
     }
   );
   const deleteCommentResponse = await deleteCommentRequestObject.json();
@@ -165,5 +171,5 @@ async function requestToDeleteComment(commentId) {
       window.location.reload();
     }, 1000);
   }
-  console.log(updateCommentResponse);
+  console.log(deleteCommentResponse);
 }

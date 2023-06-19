@@ -20,50 +20,76 @@
   </head>
   <body>
     <div class="container">
-
       <div class="text-center m-4"><h1>Update Article</h1></div>
-      <hr>
+      <hr />
 
       <!-- thumbnail section -->
       <h2 class="mt-4 mb-2">thumbnail:</h2>
-      <div >
-          <img style="width: 200px;" id="thumbnail" src="/images/articleDefaultThumbnail.png" alt="" srcset="">
+      <div>
+        <img
+          style="width: 200px"
+          id="thumbnail"
+          src="/images/articleDefaultThumbnail.png"
+          alt=""
+          srcset=""
+        />
+      </div>
+      <input class="mt-2" type="file" name="thumbnail" id="thumbnail-input" />
+      <hr />
+
+      <!-- images section-->
+      <h2 class="mt-4 mb-2">Images:</h2>
+      <div
+        style="margin-top: 15px; width: 100%; height: 200px"
+        id="image-container"
+      ></div>
+      <input
+        type="file"
+        class="form-control-file mt-2"
+        id="images-input"
+        name="images"
+        multiple
+      />
+      <hr />
+
+      <div id="text-input-container">
+        <!-- title section -->
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            name="title"
+            placeholder="Enter title"
+          />
         </div>
-      <input class="mt-2" type="file" name="thumbnail" id="thumbnail-input">
-      <hr>
 
-       <!-- images section-->
-    <h2 class="mt-4 mb-2">Images:</h2>
-    <div style="margin-top: 15px; width: 100%; height: 200px;" id="image-container"></div>
-    <input type="file" class="form-control-file mt-2" id="images-input" name="images" multiple>
-    <hr>
+        <!--content section-->
+        <div class="form-group">
+          <label for="content">Content:</label>
+          <textarea
+            class="form-control"
+            id="content"
+            name="content"
+            rows="6"
+          ></textarea>
+        </div>
 
-    <div id="text-input-container">
-      <!-- title section -->
-    <div class="form-group">
-        <label for="title">Title:</label>
-        <input type="text" class="form-control" id="title" name="title" placeholder="Enter title">
+        <div class="d-flex flex-row justify-content-between mt-3">
+          <button
+            id="textFieldsSubmitButton"
+            type="submit"
+            class="btn btn-primary"
+          >
+            Update
+          </button>
+          <button id="deleteArticleButton" type="submit" class="btn btn-danger">
+            Delete Article
+          </button>
+        </div>
       </div>
-  
-
-      <!--content section-->
-      <div class="form-group">
-        <label for="content">Content:</label>
-        <textarea class="form-control" id="content" name="content" rows="6"></textarea>
-      </div>
-      
-      <div class="d-flex flex-row justify-content-between mt-3">
-        <button id="textFieldsSubmitButton" type="submit" class="btn btn-primary">Update</button>
-        <button id="deleteArticleButton" type="submit" class="btn btn-danger">Delete Article</button>
-      </div>
-
     </div>
-
-
-    </div>
-
-   
-
 
     <!-- <div id="message-box" class="message-box"></div> -->
     <div id="message-box" class="message-box">
@@ -79,5 +105,3 @@
     <script src="/javascripts/update-article.js"></script>
   </body>
 </html>
-
-
