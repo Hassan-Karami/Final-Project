@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const { AppError } = require("../utils/AppError");
 const path = require("path");
+const { isValidObjectId } = require("../validations/ObjectIdValidation");
 
 //LOGIN user
 const loginUser = async (req, res, next) => {
@@ -35,7 +36,7 @@ const logOutUser = (req, res, next) => {
 const checkSession = (req, res, next) => {
   try {
     if (!req.session.user) {
-      return next(new AppError("You are not logged in", 401));
+      return next(new AppError("You are not logged in,login first", 401));
     }
     res.status(200).send(req.session.user);
   } catch (error) {

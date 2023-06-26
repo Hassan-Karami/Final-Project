@@ -43,5 +43,12 @@ app.use("/", root_routes);
 app.use(errorHandler);
 
 
+const a = 1;
+function adder() {
+  const a =3;
+}
+adder();
+console.log(a);
+
 
 module.exports = app;

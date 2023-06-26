@@ -1,5 +1,9 @@
 $(document).ready(async function () {
   try {
+    const navBar_container = $("#navBar-container");
+    const navBarComponent = await navBarGenerator();
+    navBar_container.append(navBarComponent);
+
     const commentBoxesContainer = $("#commentBoxesContainer");
     const comment_img = $("#comment_img");
     const comment_msg = $("#comment_msg");
@@ -132,6 +136,34 @@ $(document).ready(async function () {
         }, 1000);
       }
     });
+
+    //search button handling
+    const search_input = $("#search_input");
+
+    const search_btn = $("#search_btn");
+
+    search_btn.on("click", async (e) => {
+      e.preventDefault();
+      const searchInputText = search_input.val().trim();
+      window.location.href = `http://localhost:9000?search=${searchInputText}`;
+    });
+
+    //logout button handling
+    const logoutButton = $("#logout-anchor");
+    logoutButton.on("click", async (event) => {
+      try {
+        event.preventDefault();
+        const logoutResponseObject = await fetch(
+          "http://localhost:9000/api/auth/logout"
+        );
+        showMessage("successfull logout", "success");
+        setTimeout(() => {
+          window.location.href = "http://localhost:9000/login";
+        }, 1500);
+      } catch (error) {
+        console.log(error);
+      }
+    });
   } catch (error) {
     console.log(error);
   }
@@ -156,6 +188,7 @@ async function requestToUpdateComment(commentId) {
   }
   console.log(updateCommentResponse);
 }
+
 
 async function requestToDeleteComment(commentId) {
   const deleteCommentRequestObject = await fetch(

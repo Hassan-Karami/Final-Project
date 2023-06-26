@@ -1,4 +1,9 @@
 $(document).ready(async function () {
+  //genarate navbar
+  const navBar_container = $("#navBar-container");
+  const navBarComponent = await navBarGenerator();
+  navBar_container.append(navBarComponent);
+
   const form = $("form");
   const titleField = $("#title");
   const contentField = $("#content");
@@ -38,6 +43,17 @@ $(document).ready(async function () {
     setTimeout(() => {
       window.location.reload();
     }, 1000);
+  });
+
+  //search button handling
+  const search_input = $("#search_input");
+
+  const search_btn = $("#search_btn");
+
+  search_btn.on("click", async (e) => {
+    e.preventDefault();
+    const searchInputText = search_input.val().trim();
+    window.location.href = `http://localhost:9000?search=${searchInputText}`;
   });
 
   //logout button handling

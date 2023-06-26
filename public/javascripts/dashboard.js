@@ -1,10 +1,8 @@
 $(document).ready(async function () {
-  //delay function
-  function delayTimePromise(ms) {
-    return new Promise((resolve, reject) => {
-      setTimeout(resolve, ms);
-    });
-  }
+  //genarate navbar
+  const navBar_container = $("#navBar-container");
+  const navBarComponent = await navBarGenerator();
+  navBar_container.append(navBarComponent);
 
   function showMessage(message, type) {
     const $messageBox = $("#message-box");
@@ -152,6 +150,17 @@ $(document).ready(async function () {
       showMessage("No file selected", "error");
       console.log("No file selected");
     }
+  });
+
+  //search button handling
+  const search_input = $("#search_input");
+
+  const search_btn = $("#search_btn");
+
+  search_btn.on("click", async (e) => {
+    e.preventDefault();
+    const searchInputText = search_input.val().trim();
+    window.location.href = `http://localhost:9000?search=${searchInputText}`;
   });
 
   //logout button handling

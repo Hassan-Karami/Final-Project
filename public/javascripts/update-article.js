@@ -1,5 +1,10 @@
 $(document).ready(async () => {
   try {
+    //genarate navbar
+    const navBar_container = $("#navBar-container");
+    const navBarComponent = await navBarGenerator();
+    navBar_container.append(navBarComponent);
+
     const imagesContainer = $("#image-container");
     const images_input = document.getElementById("images-input");
     const thumbnail_input = document.getElementById("thumbnail-input");
@@ -13,6 +18,7 @@ $(document).ready(async () => {
     const responseObject = await fetch(
       `http://localhost:9000/api/articles/${articleId}`
     );
+    console.log(responseObject);
     const article = await responseObject.json();
     if (responseObject.status === 401) {
       showMessage("You are not authenticated, login first...", "error");
@@ -65,6 +71,7 @@ $(document).ready(async () => {
       for (let i = 0; i < images_input.files.length; i++) {
         formData.append("images", images_input.files[i]);
       }
+
       const responseObject = await fetch(
         `http://localhost:9000/api/articles/${articleId}`,
         {
@@ -72,8 +79,10 @@ $(document).ready(async () => {
           body: formData,
         }
       );
-      const response = await responseObject.json();
-      if (responseObject.status >= 400 && response.status < 600) {
+      // const response = await responseObject.json();
+      if (responseObject.status >= 400 && responseObject.status < 600) {
+        const response = await responseObject.json();
+        console.log(response);
         showMessage(response.message, "error");
       }
       if (responseObject.status === 200) {
@@ -100,7 +109,7 @@ $(document).ready(async () => {
         }
       );
       const response = await responseObject.json();
-      if (responseObject.status >= 400 && response.status < 600) {
+      if (responseObject.status >= 400 && responseObject.status < 600) {
         showMessage(response.message, "error");
       }
       if (responseObject.status === 200) {
@@ -108,7 +117,7 @@ $(document).ready(async () => {
       }
     });
 
-    //delete article buttun handler
+    //Delete article buttun handler
     deleteArticleButton.on("click", async (e) => {
       e.preventDefault();
       const responseObject = await fetch(
@@ -129,6 +138,34 @@ $(document).ready(async () => {
         setTimeout(() => {
           window.location.href = `http://localhost:9000/my_articles`;
         }, 1000);
+      }
+    });
+
+    //search button handling
+    const search_input = $("#search_input");
+
+    const search_btn = $("#search_btn");
+
+    search_btn.on("click", async (e) => {
+      e.preventDefault();
+      const searchInputText = search_input.val().trim();
+      window.location.href = `http://localhost:9000?search=${searchInputText}`;
+    });
+
+    //logout button handling
+    const logoutButton = $("#logout-anchor");
+    logoutButton.on("click", async (event) => {
+      try {
+        event.preventDefault();
+        const logoutResponseObject = await fetch(
+          "http://localhost:9000/api/auth/logout"
+        );
+        showMessage("successfull logout", "success");
+        setTimeout(() => {
+          window.location.href = "http://localhost:9000/login";
+        }, 1500);
+      } catch (error) {
+        console.log(error);
       }
     });
   } catch (error) {

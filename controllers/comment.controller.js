@@ -4,11 +4,15 @@ const Article = require("../models/Article");
 const Comment = require("../models/Comment");
 const {checkIfFileExists} = require("../services/checkFileExistance");
 const { AppError } = require("../utils/AppError");
+const { isValidObjectId } = require("../validations/ObjectIdValidation");
 
 //CREATE comment
 const createComment = asyncHandler(async (req,res,next) =>{
   
     const { content, articleId } = req.body;
+     if (!isValidObjectId(articleId)) {
+       return next(new AppError("article id is not valid", 400));
+     }
     const targetArticle = await Article.findById(articleId);
     console.log(req.body);
     //check if article exists
@@ -25,7 +29,10 @@ const createComment = asyncHandler(async (req,res,next) =>{
 
 //GET comment by id
 const getCommentById = asyncHandler(async (req, res, next) => {
- const {commentId} = req.params; 
+ const {commentId} = req.params;
+   if (!isValidObjectId(commentId)) {
+     return next(new AppError("comment id is not valid", 400));
+   } 
  const targetComment = await Comment.findById(commentId);
  res.status(200).send(targetComment)
 });
@@ -56,6 +63,9 @@ const getAllMyComments = asyncHandler(async (req, res, next) => {
 //Update comment
 const updateComment = asyncHandler(async (req, res, next) => {
  const {commentId} = req.params;
+   if (!isValidObjectId(commentId)) {
+     return next(new AppError("comment id is not valid", 400));
+   }
  const {content} = req.body;
  const updatedComment = await Comment.findByIdAndUpdate(
   commentId,
@@ -68,6 +78,9 @@ const updateComment = asyncHandler(async (req, res, next) => {
 //Delete comment
 const deleteComment = asyncHandler(async (req, res, next) => {
   const { commentId } = req.params;
+   if (!isValidObjectId(commentId)) {
+     return next(new AppError("comment id is not valid", 400));
+   }
   await Comment.findByIdAndDelete(commentId);
   res
     .status(200)

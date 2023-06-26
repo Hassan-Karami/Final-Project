@@ -20,7 +20,7 @@ $(document).ready(async function () {
     }, 2000);
   }
 
-  //check session and dont let user to stay in login page he is loggedin
+  //check session and dont let user to stay in login page if he is loggedin
   const responseObject = await fetch(
     "http://localhost:9000/api/auth/check_session"
   );
@@ -34,7 +34,7 @@ $(document).ready(async function () {
     responseObject.status === 200 &&
     userProperties.role === "blogger"
   ) {
-    window.location.href = "http://localhost:9000/dashboard";
+    window.location.href = "http://localhost:9000/articles";
   }
 
   $("form").on("submit", async (event) => {
@@ -66,7 +66,7 @@ $(document).ready(async function () {
     } else {
       showMessage("successfull login", "success");
       setTimeout(() => {
-        window.location.href = `http://localhost:9000/dashboard`;
+        window.location.href = `http://localhost:9000/articles`;
       }, 1000);
     }
 

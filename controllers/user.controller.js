@@ -9,6 +9,7 @@ const { paginate } = require("../utils/pagination");
 const {articleRemover} = require("../services/article.services");
 const fs = require("fs/promises");
 const path = require("path");
+const { isValidObjectId } = require("../validations/ObjectIdValidation");
 
 
 
@@ -18,10 +19,10 @@ const getAllUsers = async (req, res, next) => {
     let { page, limit } = req.query;
     if (!limit) limit = 3;
     if (!page) page = 1;
-    const query = User.find({}, { password: 0, __v: 0 }).sort({
+    const query = User.find({role:{$ne: "admin"}}, { password: 0, __v: 0 }).sort({
       registration_date: -1,
     });
-    const total = await User.countDocuments();
+    const total = await User.countDocuments(query);
     const pages = Math.ceil(total / limit || 1);
     const usersList = await paginate(query, page, limit);
     res.status(200).send({ total: total, pages: pages, data: usersList });
@@ -36,6 +37,9 @@ const getAllUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
+    if(!isValidObjectId(userId)){
+      return next(new AppError("user id is not valid",400));
+    }
     const targetUser = await User.findById(userId, {
       password: 0,
     }).populate("articles");
@@ -80,6 +84,9 @@ const createUser = async (req, res, next) => {
 const deleteUserById = async (req, res, next) => {
   try {
     const {userId} = req.params;
+     if (!isValidObjectId(userId)) {
+       return next(new AppError("user id is not valid", 400));
+     }
     const targetUser = await User.findById(userId);
     //check articles and remove them if exist
     const userArticles = await Article.find({author: userId});
@@ -127,6 +134,9 @@ const deleteUserById = async (req, res, next) => {
 const updateUserById = async (req, res, next) => {
   try {
     const {userId} = req.params;
+     if (!isValidObjectId(userId)) {
+       return next(new AppError("user id is not valid", 400));
+     }
     const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
     });
@@ -145,6 +155,9 @@ const updateUserById = async (req, res, next) => {
 const updateUserPassswordById = async (req, res, next) => {
 
   const {userId} = req.params;
+   if (!isValidObjectId(userId)) {
+     return next(new AppError("user id is not valid", 400));
+   }
   const targetUser = await User.findById(userId);
   const { current_password, new_password } = req.body;
   if (!current_password?.trim() || !new_password?.trim()) {
@@ -167,6 +180,9 @@ const updateUserPassswordById = async (req, res, next) => {
 const uploadAvatarById = async (req, res, next) => {
   const uploadUserAvatar = userAvatarUpload.single("avatar");
   const {userId} = req.params;
+   if (!isValidObjectId(userId)) {
+     return next(new AppError("user id is not valid", 400));
+   }
   const targetUser = await User.findById(userId);
 
   uploadUserAvatar(req, res, async (err) => {

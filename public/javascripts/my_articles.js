@@ -1,5 +1,10 @@
 $(document).ready(async function () {
   try {
+    //genarate navbar
+    const navBar_container = $("#navBar-container");
+    const navBarComponent = await navBarGenerator();
+    navBar_container.append(navBarComponent);
+
     const paginationUl = $("#paginationUl");
     const articlesContainer = $("#articles-container");
     const queryString = window.location.search;
@@ -16,7 +21,6 @@ $(document).ready(async function () {
       `http://localhost:9000/api/articles/me?page=${page}`
     );
     const data = await responseObject.json();
-    console.log(responseObject);
     if (responseObject.status === 401) {
       showMessage("you are not logged in. login first...", "error");
       setTimeout(() => {
@@ -24,15 +28,51 @@ $(document).ready(async function () {
       }, 1000);
     }
 
+    //search button handling
+    const search_input = $("#search_input");
+
+    const search_btn = $("#search_btn");
+
+    search_btn.on("click", async (e) => {
+      e.preventDefault();
+      const searchInputText = search_input.val().trim();
+      window.location.href = `http://localhost:9000?search=${searchInputText}`;
+    });
+
+    //logout button handling
+    const logoutButton = $("#logout-anchor");
+    logoutButton.on("click", async (event) => {
+      try {
+        event.preventDefault();
+        const logoutResponseObject = await fetch(
+          "http://localhost:9000/api/auth/logout"
+        );
+        const logoutResponse = await logoutResponseObject.json();
+        if (
+          logoutResponseObject.status >= 400 &&
+          logoutResponseObject.status < 600
+        ) {
+          showMessage(logoutResponse.message, "error");
+        } else {
+          showMessage("successfull logout", "success");
+          setTimeout(() => {
+            window.location.href = "http://localhost:9000/login";
+          }, 1500);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
     const total = data.total;
     const pages = data.pages;
     console.log("total articles: " + total);
     console.log("total pages: " + pages);
     const articles = data.data;
-    if (articles.length < 1) {
-      return showMessage("no article registered for this user", "error");
-    }
     console.log(articles);
+    if (articles.length < 1) {
+      return;
+    }
 
     //generate pagination
     for (let i = 0; i < pages; i++) {
@@ -86,23 +126,6 @@ $(document).ready(async function () {
 
       // Append the card to the articles container
       articlesContainer.append(card);
-    });
-
-    //logout button handling
-    const logoutButton = $("#logout-anchor");
-    logoutButton.on("click", async (event) => {
-      try {
-        event.preventDefault();
-        const logoutResponseObject = await fetch(
-          "http://localhost:9000/api/auth/logout"
-        );
-        showMessage("successfull logout", "success");
-        setTimeout(() => {
-          window.location.href = "http://localhost:9000/login";
-        }, 1500);
-      } catch (error) {
-        console.log(error);
-      }
     });
   } catch (error) {
     console.log(error?.message);

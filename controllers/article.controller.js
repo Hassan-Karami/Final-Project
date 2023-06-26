@@ -9,6 +9,7 @@ const { join } = require("node:path");
 const fs = require("fs/promises");
 const {multerUpload,} = require("../utils/multer-settings");
 const Comment = require("../models/Comment");
+const { isValidObjectId } = require("../validations/ObjectIdValidation");
 
 
 
@@ -94,6 +95,9 @@ const allMyArticles = async (req, res, next) => {
 //GET article by id
 const getArticleById = asyncHandler(async (req, res, next) => {
   const articleId = req.params.id;
+   if (!isValidObjectId(articleId)) {
+     return next(new AppError("article id is not valid", 400));
+   }
   const targetArticle = await Article.findById(articleId).populate("author").populate("comments","_id");
   res.status(200).json(targetArticle);
 });
@@ -102,8 +106,14 @@ const getArticleById = asyncHandler(async (req, res, next) => {
 const updateArticle = asyncHandler(async (req, res, next) => {
   const updateBody = {};
   const articleId = req.params.id;
+   if (!isValidObjectId(articleId)) {
+     return next(new AppError("article id is not valid", 400));
+   }
+  
   const targetArticle = await Article.findById(articleId);
   const { title, content } = req.body;
+  console.log("req.files is:");
+  console.log(req.files);
   //update thumbnail
   if (req.files) {
     if (!!req.files.thumbnail) {
@@ -149,6 +159,9 @@ const updateArticle = asyncHandler(async (req, res, next) => {
 //DELETE Article
 const deleteArticleById = asyncHandler(async (req, res, next) => {
   const articleId = req.params.id;
+   if (!isValidObjectId(articleId)) {
+     return next(new AppError("article id is not valid", 400));
+   }
   const targetArticle = await Article.findById(articleId);
   //delete thumbnail
   const thumbnailFilePath = join(

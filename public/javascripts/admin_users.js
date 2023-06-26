@@ -1,5 +1,18 @@
 $(document).ready(async function () {
   try {
+    const navBar_container = $("#navBar-container");
+    const navBarComponent = await navBarGenerator();
+    navBar_container.append(navBarComponent);
+
+    const checkSessionResponse = await checkSession();
+
+    if (!checkSessionResponse || checkSessionResponse.role !== "admin") {
+      showMessage("You do not have permission to access this page", "error");
+      return setTimeout(() => {
+        window.location.href = "http://localhost:9000/articles";
+      }, 1000);
+    }
+
     const logout_anchor = $("#logout-anchor");
     const userTableBody = $("#userTableBody");
     const paginationUl = $("#paginationUl");
@@ -58,6 +71,17 @@ $(document).ready(async function () {
       </td>`);
 
       userTableBody.append(row);
+    });
+
+    //search button handling
+    const search_input = $("#search_input");
+
+    const search_btn = $("#search_btn");
+
+    search_btn.on("click", async (e) => {
+      e.preventDefault();
+      const searchInputText = search_input.val().trim();
+      window.location.href = `http://localhost:9000?search=${searchInputText}`;
     });
 
     //loguout handling
